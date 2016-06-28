@@ -14,30 +14,45 @@ public class Player extends Thread{
 	private int row;
 	private int col;
 	private Map<String,int[]> moves;
+	private long numberOfMoves;
 	
 	private volatile boolean running = true;
 
     public void terminate() {
         running = false;
     }
+    
+	public long getNumberOfMoves() {
+		return numberOfMoves;
+	}
 	
+	public void setNumberOfMoves(long numberOfMoves) {
+		this.numberOfMoves = numberOfMoves;
+	}
+
+
+
 	public Player(String name) {
 		super();
 		this.playerName = name;
+		this.numberOfMoves = 0;
 		moves = new HashMap<String,int[]>();
-		int[] mov = new int[2];
-		mov[0] = -1;
-		mov[1] = 0;
-		moves.put("UP", mov);
-		mov[0] = 1;
-		mov[1] = 0;
-		moves.put("DOWN", mov);
-		mov[0] = 0;
-		mov[1] = 1;
-		moves.put("RIGHT", mov);
-		mov[0] = 0;
-		mov[1] = -1;
-		moves.put("LEFT", mov);
+		int[] up = new int[2];
+		up[0] = -1;
+		up[1] = 0;
+		moves.put("UP", up);
+		int[] down = new int[2];
+		down[0] = 1;
+		down[1] = 0;
+		moves.put("DOWN", down);
+		int[] right = new int[2];
+		right[0] = 0;
+		right[1] = 1;
+		moves.put("RIGHT", right);
+		int[] left = new int[2];
+		left[0] = 0;
+		left[1] = -1;
+		moves.put("LEFT", left);
 	}
 	
 
@@ -67,6 +82,7 @@ public class Player extends Thread{
 	private void walk(){
 		Random rand = new Random();
 		int x = rand.nextInt(4);
+		//System.out.println("---------->"+this.getMove(x));
 		int mov[] = moves.get(this.getMove(x));
 		while(((row+mov[0]) >= MazeConfig.MAZEMAP.length) ||
 				((row+mov[0]) < 0) ||
@@ -74,11 +90,13 @@ public class Player extends Thread{
 				((col+mov[1]) >= MazeConfig.MAZEMAP.length) ||
 				(!MazeConfig.MAZEMAP[row+mov[0]][col+mov[1]].equals("0") &&
 				!MazeConfig.MAZEMAP[row+mov[0]][col+mov[1]].equals("S"))){
+			x = rand.nextInt(4);
 			mov = moves.get(this.getMove(x));
 		}
 		MazeConfig.MAZEMAP[row][col] = "0";
 		this.row += mov[0];
-		this.col += mov[1];		
+		this.col += mov[1];
+		//System.out.println("O jogador "+this.playerName+" andou para "+row+","+col);
 	}
 
 	@Override
@@ -89,7 +107,7 @@ public class Player extends Thread{
 			if(!file.exists())
 				file.createNewFile();
 			
-			PrintWriter writer = new PrintWriter(file);
+			PrintWriter writer = new PrintWriter(new FileWriter(file));
 			int i=0,j=0;
 			while(!MazeConfig.MAZEMAP[i][j].equals("i")){
 				if((j+1)>= MazeConfig.MAZEMAP.length){
@@ -105,21 +123,22 @@ public class Player extends Thread{
 				}					
 			}
 			
-			System.out.println("Jogador "+this.getPlayerName()+" achou ponto de inicio em "+i+","+j);
+			//System.out.println("Jogador "+this.getPlayerName()+" achou ponto de inicio em "+i+","+j);
 			this.row = i;
 			this.col = j;
 			MazeConfig.MAZEMAP[i][j] = "P";			
 					
 			while(running){
 				writer.println("["+row+","+col+"]");
-				walk();				
-				if(MazeConfig.MAZEMAP[row][col].equals("S")){
-					writer.write("Achou a saída\n");
-					System.out.println("Jogador "+this.getPlayerName()+" achou saida.");
+				walk();			
+				this.numberOfMoves++;
+				if(MazeConfig.MAZEMAP[row][col].equals("S")){					
+					writer.write("Achou a saída!\n");
+					//System.out.println("Jogador "+this.getPlayerName()+" achou saida.");
 					running = false;
 				}
 				else
-					MazeConfig.MAZEMAP[row][col] = String.valueOf(this.getId());
+					MazeConfig.MAZEMAP[row][col] = "P";
 			}
 			
 			writer.close();

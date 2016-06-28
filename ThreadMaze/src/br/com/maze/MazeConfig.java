@@ -22,7 +22,7 @@ public class MazeConfig {
 		return MAZEMAP;
 	}
 	
-	public void printMap(){
+	public static void printMap(){
 		for(int i=0;i<MAZEMAP.length;i++){
 			for(int j=0;j<MAZEMAP.length;j++)
 				System.out.print(MAZEMAP[i][j]);

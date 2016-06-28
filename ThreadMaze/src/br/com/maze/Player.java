@@ -3,6 +3,7 @@ package br.com.maze;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -66,10 +67,13 @@ public class Player extends Thread{
 	private void walk(){
 		Random rand = new Random();
 		int x = rand.nextInt(4);
-		int mov[] = new int[2]; 
-		mov = moves.get(this.getMove(x));
-		while(!MazeConfig.MAZEMAP[row+mov[0]][col+mov[1]].equals("0") &&
-				!MazeConfig.MAZEMAP[row+mov[0]][col+mov[1]].equals("S")){
+		int mov[] = moves.get(this.getMove(x));
+		while(((row+mov[0]) >= MazeConfig.MAZEMAP.length) ||
+				((row+mov[0]) < 0) ||
+				((col+mov[1]) < 0) ||
+				((col+mov[1]) >= MazeConfig.MAZEMAP.length) ||
+				(!MazeConfig.MAZEMAP[row+mov[0]][col+mov[1]].equals("0") &&
+				!MazeConfig.MAZEMAP[row+mov[0]][col+mov[1]].equals("S"))){
 			mov = moves.get(this.getMove(x));
 		}
 		MazeConfig.MAZEMAP[row][col] = "0";
@@ -85,22 +89,33 @@ public class Player extends Thread{
 			if(!file.exists())
 				file.createNewFile();
 			
-			FileWriter writer = new FileWriter(file);
-			for(int i=0;i<MazeConfig.MAZEMAP.length;i++){
-				for(int j=0;j<MazeConfig.MAZEMAP.length;i++){
-					if(MazeConfig.MAZEMAP[i][j].equals("i")){
-						this.row = j;
-						this.col = i;
-						MazeConfig.MAZEMAP[i][j] = String.valueOf(this.getId());
-						break;
-					}
+			PrintWriter writer = new PrintWriter(file);
+			int i=0,j=0;
+			while(!MazeConfig.MAZEMAP[i][j].equals("i")){
+				if((j+1)>= MazeConfig.MAZEMAP.length){
+					j=0;
+					i++;	
 				}
+				else
+					j++;
+				if(i >= MazeConfig.MAZEMAP.length){
+					System.out.println("Jogador "+this.getPlayerName()+" não achou ponto de inicio.");
+					running = false;
+					return;					
+				}					
 			}
+			
+			System.out.println("Jogador "+this.getPlayerName()+" achou ponto de inicio em "+i+","+j);
+			this.row = i;
+			this.col = j;
+			MazeConfig.MAZEMAP[i][j] = "P";			
+					
 			while(running){
-				writer.write("["+row+","+col+"]\n");
+				writer.println("["+row+","+col+"]");
 				walk();				
 				if(MazeConfig.MAZEMAP[row][col].equals("S")){
 					writer.write("Achou a saída\n");
+					System.out.println("Jogador "+this.getPlayerName()+" achou saida.");
 					running = false;
 				}
 				else

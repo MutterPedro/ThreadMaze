@@ -1,0 +1,38 @@
+package br.com.maze;
+
+import java.io.File;
+
+public class Player extends Thread{
+	
+	private String playerName;
+	
+	public Player(String name) {
+		super();
+		this.playerName = name;
+	}
+	
+	public Player() {
+		super();
+		this.playerName = "player"+this.getId();
+	}
+
+	public String getPlayerName() {
+		return playerName;
+	}
+
+	public void setPlayerName(String playerName) {
+		this.playerName = playerName;
+	}
+
+	@Override
+	public void run(){
+		File file = new File("player"+this.getId()+"_log.txt");
+		if(!file.exists())
+			file.createNewFile();
+		for(int i=0;i<MazeConfig.MAZEMAP.length;i++){
+			for(int j=0;j<MazeConfig.MAZEMAP.length;i++){
+				
+			}
+		}
+	}
+}

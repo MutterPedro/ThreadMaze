@@ -1,0 +1,14 @@
+package br.com.maze;
+
+import java.io.IOException;
+
+public class Main {
+
+	public static void main(String[] args) throws IOException {
+		
+		MazeConfig config = MazeConfig.getInstance("configuracao.txt");
+		Player[] players = new Player(config.getNumPlayers());
+
+	}
+
+}

@@ -1,0 +1,57 @@
+package br.com.maze;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class MazeConfig {
+	
+	private int numPlayers;
+	private List<String> mazeMap;
+	
+	public int getNumPlayers() {
+		return numPlayers;
+	}
+	public void setNumPlayers(int numPlayers) {
+		this.numPlayers = numPlayers;
+	}
+	public List<String> getMazeMap() {
+		return mazeMap;
+	}
+	public void setMazeMap(List<String> mazeMap) {
+		this.mazeMap = mazeMap;
+	}
+	
+	private MazeConfig(int numPlayers, List<String> mazeMap) {
+		super();
+		this.numPlayers = numPlayers;
+		this.mazeMap = mazeMap;
+	}
+	
+	public static MazeConfig getInstance(String filename) throws IOException{
+		MazeConfig config = null;		
+		File file = new File(filename);	
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+		
+		String line = reader.readLine();
+		int num = Integer.parseInt(line);
+		List<String> map = new ArrayList<String>();
+		while((line = reader.readLine()) != null){
+			map.add(line);
+		}
+		reader.close();
+		
+		config = new MazeConfig(num,map);
+		
+		return config;
+	}
+	
+	
+	
+	
+	
+}

@@ -1,0 +1,82 @@
+package br.com.maze;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+public class Player extends Thread{
+	
+	private String playerName;
+	private int posx;
+	private int posy;
+	private Map<String,int[]> moves;
+	
+	public Player(String name) {
+		super();
+		this.playerName = name;
+		moves = new HashMap<String,int[]>();
+		moves.put("UP", [-1,0]);
+	}
+	
+	public Player() {
+		super();
+		this.playerName = "player"+this.getId();
+	}
+
+	public String getPlayerName() {
+		return playerName;
+	}
+
+	public void setPlayerName(String playerName) {
+		this.playerName = playerName;
+	}
+	
+	public String getMove(int x){
+		switch(x){
+			case 0:
+				return "UP";
+			case 1:
+				return "RIGHT";
+			case 2: 
+				return "DOWN";
+			case 3:
+				return "LEFT";
+			default:
+				return "invalid move";
+		}			
+	}
+	
+	private void walk(){
+		Random rand = new Random();
+		int x = rand.nextInt(8);
+	}
+
+	@Override
+	public void run(){
+		File file = new File(this.getPlayerName()+"_log.txt");
+		
+		try {
+			if(!file.exists())
+				file.createNewFile();
+			
+			FileWriter writer = new FileWriter(file);
+			for(int i=0;i<MazeConfig.MAZEMAP.length;i++){
+				for(int j=0;j<MazeConfig.MAZEMAP.length;i++){
+					if(MazeConfig.MAZEMAP[i][j].equals("i")){
+						this.posx = i;
+						this.posy = j;
+						MazeConfig.MAZEMAP[i][j] = String.valueOf(this.getId());
+						break;
+					}
+				}
+			}
+			
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}
+		
+	}
+}

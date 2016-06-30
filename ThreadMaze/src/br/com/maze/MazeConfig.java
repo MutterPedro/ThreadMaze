@@ -10,7 +10,7 @@ import java.util.List;
 public class MazeConfig {
 	
 	private int numPlayers;
-	public static String[][] MAZEMAP;
+	private static String[][] MAZEMAP;
 	
 	public int getNumPlayers() {
 		return numPlayers;
@@ -21,6 +21,19 @@ public class MazeConfig {
 	public String[][] getMazeMap() {
 		return MAZEMAP;
 	}
+	
+	public static synchronized void setMap(int i,int j,String value){
+		MAZEMAP[i][j] = value;
+	}
+	
+	public static String getMapPositionValue(int i, int j){
+		return MAZEMAP[i][j];
+	}
+	
+	public static int getMapLength(){
+		return MAZEMAP[0].length;
+	}
+	
 	
 	public static void printMap(){
 		for(int i=0;i<MAZEMAP.length;i++){
